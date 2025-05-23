@@ -6,15 +6,14 @@ Content-Type: application/cloudevents+json
 {
     "specversion": "1.0",
     "id": "1234",
-    "type": "com.company.event.eventcreated",
+    "type": "com.ext.consumer.1.event.eventcreated",
     "source": "/distribution-service",
     "subject": "/canonical/transport-movement",
     "time": "2025-05-22T13:13:19.224274698+00:00",
     "datacontenttype": "application/json",
     "data": {
-        "TransportMovement": {
-            "Latitude": 38.360778548329144,
-            "Longitude": -125.22284557865196
-        }
+        "key1": "7",
+        "latitude": "38.360778548329144",
+        "longitude": "-125.22284557865196"
     }
 }

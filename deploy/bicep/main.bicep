@@ -68,6 +68,33 @@ module eventGridNamespace 'br/public:avm/res/event-grid/namespace:0.7.2' = {
                 maxDeliveryCount: 10
               }
             }
+            filtersConfiguration: {
+              includedEventTypes: [
+                'com.ext.consumer.1.event.eventcreated'
+              ]
+              filters: [
+                {
+                  values: [
+                    [
+                      json('5')
+                      json('15')
+                    ]
+                  ]
+                  operatorType: 'NumberInRange'
+                  key: 'data.key1'
+                }
+                {
+                  values: [
+                    [
+                      json('35')
+                      json('40')
+                    ]
+                  ]
+                  operatorType: 'NumberInRange'
+                  key: 'data.latitude'
+                }
+              ]
+            }
             name: '${eventHubNamespaceName}-${eventHubs[0].name}'
           }
         ]
