@@ -13,6 +13,9 @@ param resourceGroupName string
 param eventHubNamespaceName string
 
 @description('Required.')
+param eventGridTopicName string
+
+@description('Required.')
 param eventGridNamespaceName string
 
 var tags = union(loadJsonContent('../../templates/tags/tags.json'), {
@@ -22,6 +25,10 @@ var tags = union(loadJsonContent('../../templates/tags/tags.json'), {
 param eventHubs array = [
   {
     name: 'consumer1'
+    partitionCount: 1
+  }
+  {
+    name: 'consumer2'
     partitionCount: 1
   }
 ]
@@ -98,6 +105,32 @@ module eventGridNamespace 'br/public:avm/res/event-grid/namespace:0.7.2' = {
             name: '${eventHubNamespaceName}-${eventHubs[0].name}'
           }
         ]
+      }
+    ]
+  }
+}
+
+module eventGridTopic 'br/public:avm/res/event-grid/topic:0.8.1' = {
+  scope: az.resourceGroup(resourceGroupName)
+  name: 'eventGridTopic'
+  params: {
+    name: eventGridTopicName
+    location: resourceGroup.outputs.location
+    managedIdentities: {
+      systemAssigned: true
+    }
+    disableLocalAuth: false
+    eventSubscriptions: [
+      {
+        destination: {
+          endpointType: 'EventHub'
+          properties: {
+            resourceId: eventHubNamespace.outputs.eventHubResourceIds[1]
+          }
+        }
+        name: '${eventHubNamespaceName}-${eventHubs[1].name}'
+        inputSchema: 'CloudEventSchemaV1_0'
+        eventDeliverySchema: 'CloudEventSchemaV1_0'
       }
     ]
   }

@@ -1,20 +1,17 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell: Launch Script",
-            "type": "PowerShell",
+            "name": "Worker",
+            "type": "coreclr",
             "request": "launch",
-            "script": "/workspaces/infra/scripts/psrule_deploy.ps1",
-            "args": [
-                "-Entity",
-                "process",
-                "-Environment",
-                "dev"
-            ]
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/test/src/PublishWorker/bin/Debug/net9.0/PublishWorker.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/test/src/PublishWorker/",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {}
         }
     ]
 }

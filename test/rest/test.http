@@ -1,8 +1,9 @@
 @bearerToken = 
-@hostname = evgns-workload-westeu-dev-01.westeurope-1.eventgrid.azure.net
+@namespaceHostName = evgns-workload-westeu-dev-01.westeurope-1.eventgrid.azure.net
+@topicHostName = evgt-workload-westeu-dev-01.westeurope-1.eventgrid.azure.net
 
 # publish event to event grid namespace topic 
-POST https://{{hostname}}/topics/canonical1:publish?api-version=2023-11-01
+POST https://{{namespaceHostName}}/topics/canonical1:publish?api-version=2023-06-01-preview
 Authorization: Bearer {{bearerToken}}
 Content-Type: application/cloudevents+json
 
@@ -20,3 +21,24 @@ Content-Type: application/cloudevents+json
         "longitude": "-125.22284557865196"
     }
 }
+
+###
+
+POST https://{{topicHostName}}/api/events
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+[
+    {
+        "id": "1234",
+        "eventType": "com.ext.consumer.1.event.eventcreated",
+        "subject": "/canonical/transport-movement",
+        "eventTime": "Thu, 22 May 2025 11:41:10 GMT",
+        "data": {
+            "key1": "7",
+            "latitude": "38.360778548329144",
+            "longitude": "-125.22284557865196"
+        },
+        "dataVersion": "1.0"
+    }
+]
