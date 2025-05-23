@@ -1,6 +1,8 @@
+@bearerToken = 
+
 # publish event to event grid namespace topic 
 POST https://evgns-workload-westeu-dev-01.westeurope-1.eventgrid.azure.net/topics/canonical1:publish?api-version=2023-11-01
-Authorization: Bearer 
+Authorization: Bearer {{bearerToken}}
 Content-Type: application/cloudevents+json
 
 {
