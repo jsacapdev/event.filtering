@@ -1,7 +1,6 @@
-using System.Text.Json;
-using Azure.Core.Serialization;
-using Azure.Messaging;
-using Azure.Messaging.EventGrid;
+using Azure.Core;
+using Azure.Messaging.EventGrid.Namespaces;
+using CloudNative.CloudEvents.SystemTextJson;
 
 namespace PublishWorker;
 
@@ -9,13 +8,13 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
 
-    private readonly EventGridPublisherClient _eventGridPublisherClient;
+    private readonly EventGridSenderClient _eventGridSenderClient;
 
-    public Worker(ILogger<Worker> logger, EventGridPublisherClient eventGridPublisherClient)
+    public Worker(ILogger<Worker> logger, EventGridSenderClient eventGridSenderClient)
     {
         _logger = logger;
 
-        _eventGridPublisherClient = eventGridPublisherClient;
+        _eventGridSenderClient = eventGridSenderClient;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,20 +23,25 @@ public class Worker : BackgroundService
         {
             try
             {
-                List<EventGridEvent> eventsList = new List<EventGridEvent>
+                var evt = new CloudNative.CloudEvents.CloudEvent
                 {
-                    new EventGridEvent("/canonical/transport-movement",
-                                       "com.ext.consumer.1.event.eventcreated",
-                                       "1.0",
-                                       new CustomModel()
-                                       {
-                                            key1 = "7",
-                                            longitude = "38.360778548329144",
-                                            latitude = "-125.22284557865196"
-                                       })
+                    Source = new Uri("/distribution-service"),
+                    Type = "com.ext.consumer.1.event.eventcreated",
+                    Subject = "/canonical/transport-movement",
+                    Time = DateTime.UtcNow,
+                    Data = new CustomModel()
+                    {
+                        key1 = "7",
+                        latitude = "38.360778548329144",
+                        longitude = "-125.22284557865196"
+                    },
+                    Id = Guid.NewGuid().ToString()
                 };
 
-                await _eventGridPublisherClient.SendEventsAsync(eventsList);
+                var jsonFormatter = new JsonEventFormatter();
+
+                await _eventGridSenderClient.SendEventAsync(
+                    RequestContent.Create(jsonFormatter.EncodeStructuredModeMessage(evt, out _)));
             }
             catch (Exception ex)
             {
@@ -49,7 +53,7 @@ public class Worker : BackgroundService
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
             }
 
-            await Task.Delay(1000, stoppingToken);
+            await Task.Delay(10000, stoppingToken);
         }
     }
 }

@@ -3,7 +3,7 @@
 @topicHostName = evgt-workload-westeu-dev-01.westeurope-1.eventgrid.azure.net
 
 # publish event to event grid namespace topic 
-POST https://{{namespaceHostName}}/topics/canonical1:publish?api-version=2023-06-01-preview
+POST https://{{namespaceHostName}}/topics/canonical1:publish?api-version=2024-06-01
 Authorization: Bearer {{bearerToken}}
 Content-Type: application/cloudevents+json
 
